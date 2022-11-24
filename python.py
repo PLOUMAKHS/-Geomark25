@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 
 tweetMemory = []
@@ -29,31 +30,33 @@ def checkChoice(choice):
       return False
 
 def createTweet():
-      print("Please, input the text of the tweet:")
-      tweetText = input()
-      print("Now, input tweet's ID:")
-      tweetId = input()
+      tweetText = input("Please, input the text of the tweet:")
       time = datetime.now()
-      creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+      creationTime = time.strftime("\"%a %b %d %H:%M:%S +0000 %Y\"")
+      for lastId, _ in enumerate(file, 2):
+            pass
+      finishedTweet = "\"text\":\"" + tweetText + "\"" + ",\"created_at\":" + creationTime
+      print(finishedTweet)
+
       
       
 
 global file
 try:
-      file = open("tweetdhead300000.json", 'r')
+      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json")
 except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
-      lines = file.readlines()
       while(True):
             printMenu()
             choice = input()
             if(checkChoice(choice)):
                   match(choice):
                         case('c'):
-                              tweetMemory.append(input())
+                              createTweet()
                         case('x'):
                               for i in tweetMemory:
                                     print(i)
                         case  _:
                               print("oof\n")
+      file.close()
