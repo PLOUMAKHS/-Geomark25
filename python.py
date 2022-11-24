@@ -35,15 +35,49 @@ def createTweet():
       creationTime = time.strftime("\"%a %b %d %H:%M:%S +0000 %Y\"")
       for lastId, _ in enumerate(file, 2):
             pass
+      currentId = lastId
       finishedTweet = "\"text\":\"" + tweetText + "\"" + ",\"created_at\":" + creationTime
       print(finishedTweet)
 
-      
-      
+def printLast():
+      for lastId, line in enumerate(file):
+            pass
+      currentId = lastId
+      data = json.loads(line)
+      print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+
+def readPrev():
+      if currentId-1 < 0:
+            print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
+      else:
+            currentId =- 1
+            for i, line in enumerate(file):
+                  if i == currentId:
+                        break
+            data = json.loads(line)
+            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+
+def readNext():
+      if currentId+1 > 0:
+            print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
+      else:
+            currentId =+ 1
+            for i, line in enumerate(file):
+                  if i == currentId:
+                        break
+            data = json.loads(line)
+            print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
+
+def printCur():
+      for i, line in enumerate(file):
+            if i == currentId:
+                  break
+      data = json.loads(line)
+      print("\"" +data['text'] + "\" Created at: " + data['created_at'])  
 
 global file
 try:
-      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json")
+      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r')
 except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
@@ -57,6 +91,14 @@ else:
                         case('x'):
                               for i in tweetMemory:
                                     print(i)
+                        case('$'):
+                              printLast()
+                        case('-'):
+                              readPrev()
+                        case('+'):
+                              readNext()
+                        case('='):
+                              printCur()
                         case  _:
                               print("oof\n")
       file.close()
