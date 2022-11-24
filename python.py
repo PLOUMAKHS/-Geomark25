@@ -4,8 +4,6 @@ from datetime import datetime
 tweetMemory = []
 currentId = 0
 
-mia paparia
-
 def printMenu():
     print('\nPlease, choose what you would like to do:\n')
     print('c: Create tweet by giving its “text”(derive “created at” by system date time).'
