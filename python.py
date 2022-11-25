@@ -2,7 +2,12 @@ import json
 import os
 from datetime import datetime
 
+createdTweets = []
+updatedTweets = []
+updatedIds = []
+deletedTweets = []
 currentId = 0
+fileLines = 0
 
 def printMenu():
     print('\nPlease, choose what you would like to do:\n')
@@ -33,12 +38,9 @@ def createTweet():
       time = datetime.now()
       creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
       finishedTweet = dict({"text":tweetText,"created_at":creationTime})
-      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'a+') as file:
-            for lastId, _ in enumerate(file):
-                  pass
-            currentId = lastId
-            file.write(json.dumps(finishedTweet) + "\n")
-            print(finishedTweet)
+      createdTweets.append(finishedTweet)
+      global currentId 
+      currentId = fileLines + len(createdTweets)
 
 def readWithId(number):
       with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
@@ -48,10 +50,24 @@ def readWithId(number):
             data = json.loads(line)
             print("\"" +data['text'] + "\" Created at: " + data['created_at'])
 
+def updateTweet(number):
+      tweetText = input("Please, input the text of the tweet:")
+      time = datetime.now()
+      creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+      finishedTweet = dict({"text":tweetText,"created_at":creationTime})
+      updatedTweets.append(finishedTweet)
+      updatedIds.append(number)
+      global currentId
+      currentId = number
+
+def deleteTweet():
+      deletedTweets.append(currentId)
+
 def printLast():
       with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
             for lastId, line in enumerate(file):
                 pass
+            global currentId
             currentId = lastId
             data = json.loads(line)
             print("\"" +data['text'] + "\" Created at: " + data['created_at'])
@@ -60,7 +76,7 @@ def readPrev():
       if (currentId-1) < 0:
             print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
       else:
-            currentId =- 1
+            currentId = currentId - 1
             with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
                   for i, line in enumerate(file):
                         if i == currentId:
@@ -73,15 +89,38 @@ def readNext():
             print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
       else:
             with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
-                  currentId =+ 1
+                  currentId = currentId + 1
                   for i, line in enumerate(file):
                         if i == currentId:
                               break
                   data = json.loads(line)
                   print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
 
-def printCur():
-      print(currentId)
+def saveAll():
+      if(len(createdTweets)):
+            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'a') as file:
+                  for tweet in createdTweets:
+                        file.write(json.dumps(tweet) + "\n")
+      if(len(deletedTweets)):
+            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+') as file:
+                  lines = file.readlines()
+                  file.seek(0)
+                  file.truncate()
+                  for id, line in enumerate(lines):
+                        if id not in deletedTweets:
+                              file.write(line)
+      if(len(updatedTweets)):
+            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+') as file:
+                  lines = file.readlines()
+                  file.seek(0)
+                  file.truncate()
+                  i = 0
+                  for id, line in enumerate(lines):
+                        if id in updatedIds:
+                              file.write(updatedTweets[i])
+                              i += 1
+
+
               
 
 try:
@@ -89,6 +128,9 @@ try:
 except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
+      for lines, _ in enumerate(file, 2):
+            pass
+      fileLines = lines
       file.close()
       while(True):
             printMenu()
@@ -99,8 +141,10 @@ else:
                               createTweet()
                         case('r'):
                               readWithId(int(choice[1:]))
-                        case('x'):
-                              pass
+                        case('u'):
+                              updateTweet(int(choice[1:]))
+                        case('d'):
+                              deleteTweet()
                         case('$'):
                               printLast()
                         case('-'):
@@ -108,6 +152,15 @@ else:
                         case('+'):
                               readNext()
                         case('='):
-                              printCur()
-                        case  _:
-                              print("oof\n")
+                              print(currentId)
+                        case('q'):
+                              print("Program closed without saving")
+                              exit()
+                        case('w'):
+                              saveAll()
+                        case('x'):
+                              saveAll()
+                              print("Program closed with saving")
+                              exit()
+            else:
+                  print("Invalid choice, please try again!")
