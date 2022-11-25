@@ -2,7 +2,6 @@ import json
 import os
 from datetime import datetime
 
-tweetMemory = []
 currentId = 0
 
 def printMenu():
@@ -24,73 +23,84 @@ def printMenu():
 
 def checkChoice(choice):
       correctChoices = ['c','r','u','d','$','-','+','=','q','w','x']
-      for i in range(0, len(correctChoices)):
-            if(choice[0] == correctChoices[i]):
+      for i in correctChoices:
+            if(i == choice):
                   return True
       return False
 
 def createTweet():
       tweetText = input("Please, input the text of the tweet:")
       time = datetime.now()
-      creationTime = time.strftime("\"%a %b %d %H:%M:%S +0000 %Y\"")
-      for lastId, _ in enumerate(file, 2):
-            pass
-      currentId = lastId
-      finishedTweet = "\"text\":\"" + tweetText + "\"" + ",\"created_at\":" + creationTime
-      print(finishedTweet)
+      creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+      finishedTweet = dict({"text":tweetText,"created_at":creationTime})
+      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'a+') as file:
+            for lastId, _ in enumerate(file):
+                  pass
+            currentId = lastId
+            file.write(json.dumps(finishedTweet) + "\n")
+            print(finishedTweet)
 
-def printLast():
-      for lastId, line in enumerate(file):
-            pass
-      currentId = lastId
-      data = json.loads(line)
-      print("\"" +data['text'] + "\" Created at: " + data['created_at'])
-
-def readPrev():
-      if currentId-1 < 0:
-            print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
-      else:
-            currentId =- 1
+def readWithId(number):
+      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
             for i, line in enumerate(file):
-                  if i == currentId:
+                  if i == number:
                         break
             data = json.loads(line)
             print("\"" +data['text'] + "\" Created at: " + data['created_at'])
 
+def printLast():
+      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
+            for lastId, line in enumerate(file):
+                pass
+            currentId = lastId
+            data = json.loads(line)
+            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+
+def readPrev():
+      if (currentId-1) < 0:
+            print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
+      else:
+            currentId =- 1
+            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
+                  for i, line in enumerate(file):
+                        if i == currentId:
+                              break
+                  data = json.loads(line)
+                  print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+
 def readNext():
-      if currentId+1 > 0:
+      if (currentId+1) > 0:
             print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
       else:
-            currentId =+ 1
-            for i, line in enumerate(file):
-                  if i == currentId:
-                        break
-            data = json.loads(line)
-            print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
+            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
+                  currentId =+ 1
+                  for i, line in enumerate(file):
+                        if i == currentId:
+                              break
+                  data = json.loads(line)
+                  print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
 
 def printCur():
-      for i, line in enumerate(file):
-            if i == currentId:
-                  break
-      data = json.loads(line)
-      print("\"" +data['text'] + "\" Created at: " + data['created_at'])  
+      print(currentId)
+              
 
-global file
 try:
-      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r')
+      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+')
 except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
+      file.close()
       while(True):
             printMenu()
             choice = input()
-            if(checkChoice(choice)):
-                  match(choice):
+            if(checkChoice(choice[0])):
+                  match(choice[0]):
                         case('c'):
                               createTweet()
+                        case('r'):
+                              readWithId(int(choice[1:]))
                         case('x'):
-                              for i in tweetMemory:
-                                    print(i)
+                              pass
                         case('$'):
                               printLast()
                         case('-'):
@@ -101,4 +111,3 @@ else:
                               printCur()
                         case  _:
                               print("oof\n")
-      file.close()
