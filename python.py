@@ -43,8 +43,8 @@ def readWithId(number):
       if(number >= 0 and number < len(tweets)):
             global currentId
             currentId = number
-            data = json.loads(tweets[currentId])
-            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+            data = tweets[currentId]
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
       else:
             print("Invalid ID. Try again.\n")
 
@@ -69,7 +69,7 @@ def printLast():
       global currentId
       currentId = (len(tweets) - 1)
       data = json.loads(tweets[-1])
-      print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+      print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
 
 def readPrev():
       global currentId
@@ -78,7 +78,7 @@ def readPrev():
       else:
             currentId -= 1
             data = json.loads(tweets[currentId])
-            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
 
 def readNext():
       global currentId
@@ -87,13 +87,14 @@ def readNext():
       else:
             currentId += 1
             data = json.loads(tweets[currentId])
-            print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at'])) 
 
 def saveAll():
       with open("tweetdhead300000.json", 'w') as file:
             for line in tweets:
-                  file.write(line)
-
+                  convert = json.dumps(line)
+                  file.write(convert + "\n")
+                  
 
 try:
       file = open("tweetdhead300000.json", 'r')
