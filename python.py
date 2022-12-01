@@ -34,7 +34,7 @@ def createTweet():
       tweetText = input("Please, input the text of the tweet:")
       time = datetime.now()
       creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
-      finishedTweet = dict({"text":tweetText,"created_at":creationTime})
+      finishedTweet = {"text":tweetText,"created_at":creationTime}
       tweets.append(finishedTweet)
       global currentId
       currentId = len(tweets)
@@ -53,7 +53,7 @@ def updateTweet(number):
             tweetText = input("Please, input the text of the tweet:")
             time = datetime.now()
             creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
-            finishedTweet = dict({"text":tweetText,"created_at":creationTime})
+            finishedTweet = {"text":tweetText,"created_at":creationTime}
             tweets[number] = finishedTweet
             global currentId
             currentId = number
@@ -92,7 +92,7 @@ def readNext():
 def saveAll():
       with open("tweetdhead300000.json", 'w') as file:
             for line in tweets:
-                  file.write(json.dumps(line) + '\n')
+                  file.write(line)
 
 
 try:
@@ -101,7 +101,7 @@ except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
       for i, line in enumerate(file):
-            tweets.append(line)
+            tweets.append(json.loads(line))
       file.close()
       while(True):
             printMenu()
