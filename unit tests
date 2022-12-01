@@ -1,0 +1,90 @@
+import unittest
+from datetime import datetime
+import ploym
+
+
+#Assert created tweet is type 'dict'
+class Test_main(unittest.TestCase):
+    
+    global tweets
+
+    def test_create_tweet(self):
+        text = "Today we are going to finish the python project" 
+        time = datetime.now()
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":text,"created_at":creationTime}
+        self.assertEqual(str(type(finishedTweet)),"<class 'dict'>", "Not dictionary!")
+
+    def test_print_last(self):
+        data = tweets[-1]
+        print(data)
+        self.assertEqual(data, tweets[-1], "Did not read last text!")
+
+    def test_print_last_while_deleting_last(self):
+        del tweets[-1]
+        data = tweets[-1]
+        self.assertEqual(data['text'], '', "Did not read last text!")
+
+    def test_print_last(self):
+        time = datetime.now()
+        creation_time = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        tweet_text = "EP TI GINETE"
+        finished_tweet = {"text":tweet_text,"created_at":creation_time}
+        tweets.append(finished_tweet)
+        data = tweets[-1]
+        self.assertEqual(data['text'], "EP TI GINETE" , "Did not read last text!")
+        self.assertEqual(data['created_at'],creation_time,"the created time is not the same ")
+
+    def test_read_tweet_with_id(self):
+        user_input = 1 
+        current_id = user_input - 1 
+        data = tweets[current_id]
+        self.assertEqual(data['text'],tweets[current_id] ,"Did not read the text ")
+
+    def test_read_tweet_with_id_while_deleted_text(self):
+        user_input = 3 
+        current_id = user_input - 1 
+        del tweets[current_id]
+        data = tweets[current_id]
+        self.assertEqual(data['text'],tweets[current_id +1 ] ,"Did not read the text ")
+
+    def test_read_tweet_with_id_invalid_input(self):
+        userInput = 8
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        userInput = 0
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+
+
+
+    def test_update_tweet(self):
+        user_input =1
+        current_id = user_input -1
+        time = datetime.now()
+        text = "Today we are going to finish the python project"
+        creation_time = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finished_tweet = {"text":text,"created_at":creation_time}
+        self.assert_Equal(str(type(finished_tweet)),"<class 'dict'>", "Not dictionary!")
+
+    def test_update_tweet_invalid_input(self):
+        user_input = 7
+        number = user_input -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        user_input = 0
+        number = user_input -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")\
+
+    def test_deleted_tweet(self):
+        del tweets[0]
+        data = tweets[0]
+        user_input = 1
+        number = user_input -1
+        self.assertEqual(data['text'], "test2", "Did not read last text!")
+        
+
+    def main():
+        ploym.main
+        tweets = ploym.TWEETS
+    if __name__ == "__main__" :
+        main()
