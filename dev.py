@@ -4,7 +4,6 @@ from datetime import datetime
 
 tweets = []
 currentId = 0
-fileLines = 0
 
 def printMenu():
     print('\nPlease, choose what you would like to do:\n')
