@@ -1,0 +1,150 @@
+import unittest
+from datetime import datetime
+import json
+
+#Assert created tweet is type 'dict'
+class TestMain(unittest.TestCase):
+     #It opens the file and loads its content in the variable tweets
+    def setUp(self):
+        global tweets
+        tweets = []
+        global file
+        file = open("testJson.json", 'r')
+        for i, line in enumerate(file):
+            tweets.append(json.loads(line))
+    #Tests if the method create tweet works properly
+    def test_create_tweet(self):
+        text = "Today we are going to finish the python project" 
+        time = datetime.now()
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":text,"created_at":creationTime}
+        self.assertEqual(str(type(finishedTweet)),"<class 'dict'>", "Not dictionary!")
+    #Tests if the method printLast works properly
+    def test_print_last(self):
+        data = tweets[-1]
+        self.assertEqual(data['text'], "test6", "Did not read last text!")
+    #It checks if the method works while the user has deleted a tweeet
+    def test_print_last_while_deleting_last(self):
+        del tweets[-1]
+        data = tweets[-1]
+        self.assertEqual(data['text'], "test5", "Did not read last text!")
+    #It checks if the method works while the user has added a tweeet
+    def test_print_last_while_adding_tweet(self):
+        tweetText = "test7"
+        time = datetime.now()
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":tweetText,"created_at":creationTime}
+        tweets.append(finishedTweet)
+        data = tweets[-1]
+        self.assertEqual(data['text'], "test7", "Did not read last text!")
+    #It checks if the method  read tweet with id works properly
+    def test_read_tweet_with_id(self):
+        userInput = 1 
+        currentId = userInput - 1 
+        data = tweets[currentId]
+        self.assertEqual(data['text'],"test1" ,"Did not read the text ")
+    #It checks if the method read tweet works while the user has deleted a tweet 
+    def test_read_tweet_with_id_while_deleted_text(self):
+        del tweets [0]
+        userInput = 1 
+        currentId = userInput - 1 
+        data = tweets[currentId]
+        self.assertEqual(data['text'],"test2" ,"Did not read the text ")
+    #It checks if the method read tweet with id works if the user has entered an invalid input
+    def test_read_tweet_with_id_invalid_input(self):
+        userInput = 8
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        userInput = 0
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+    #It checks if the method update tweet works properly   
+    def test_update_tweet(self):
+        userInput =1
+        currentid = userInput -1
+        time = datetime.now()
+        text = "Today we are going to finish the python project"
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":text,"created_at":creationTime}
+        self.assertEqual(str(type(finishedTweet)),"<class 'dict'>", "Not dictionary!")
+    #It checks if the method update tweet if the user has entered an invalid input  
+    def test_update_tweet_invalid_input(self):
+        userInput = 7
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        userInput = 0
+        number = userInput -1
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+    #It checks the method deleted tweet
+    def test_deleted_tweet(self):
+        del tweets[0]
+        data = tweets[0]
+        userInput = 1
+        number = userInput -1
+        self.assertEqual(data['text'], "test2", "Did not read last text!")
+    #It checks the method print prev
+    def test_print_previous(self):
+        userInput = 1
+        number = userInput -2
+        self.assertNotEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        userInput = 2 
+        number = userInput -1 
+        data = tweets[number -1]
+        self.assertEqual(data['text'],"test1","Did not read the previous text!")
+    #It checks if the method print prev works while the user has deleted an input 
+    def test_print_previous_while_deleted(self):
+        userInput = 3
+        del tweets [2]
+        number = userInput-1
+        data =tweets [number-1] 
+        self.assertEqual(data['text'],"test2" ,"Did not read the text ")
+    #It checks if the method print prev works while the user has added an input  
+    def test_print_previous_while_added(self):
+        userInput= 7
+        tweetText = "test7"
+        time = datetime.now()
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":tweetText,"created_at":creationTime}
+        tweets.append(finishedTweet)
+        numbers = userInput- 1
+        data = tweets[numbers -1]
+        self.assertEqual(data['text'],"test6" ,"Did not read the text ")
+    #It prints the next tweet
+    def test_print_next(self):
+        userInput = 0
+        number = userInput 
+        self.assertEqual((number >= 0 and number < len(tweets)),1,"OUPS")
+        userInput = 2 
+        number = userInput  
+        data = tweets[number -1]
+        self.assertEqual(data['text'],"test2","Did not read the previous text!")
+    
+    def test_print_next_while_deleted(self):
+        userInput = 3
+        del tweets [2]
+        number = userInput
+        data =tweets [number -1] 
+        self.assertEqual(data['text'],"test4" ,"Did not read the text ")
+
+    def test_print_previous_while_added(self):
+        userInput= 6
+        tweetText = "test7"
+        time = datetime.now()
+        creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+        finishedTweet = {"text":tweetText,"created_at":creationTime}
+        tweets.append(finishedTweet)
+        numbers = userInput+1
+        data = tweets[numbers -1]
+        self.assertEqual(data['text'],"test7" ,"Did not read the text ")
+
+    def test_saving_all_while_user_did_nothing(self):
+       numofTweets = 6
+       for i=1:numofTweets:
+        self.asserte
+        
+
+    def tearDown(self):
+        file.close()
+
+
+unittest.main()
