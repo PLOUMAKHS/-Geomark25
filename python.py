@@ -2,10 +2,7 @@ import json
 import os
 from datetime import datetime
 
-createdTweets = []
-updatedTweets = []
-updatedIds = []
-deletedTweets = []
+tweets = []
 currentId = 0
 fileLines = 0
 
@@ -38,99 +35,73 @@ def createTweet():
       time = datetime.now()
       creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
       finishedTweet = dict({"text":tweetText,"created_at":creationTime})
-      createdTweets.append(finishedTweet)
-      global currentId 
-      currentId = fileLines + len(createdTweets)
+      tweets.append(finishedTweet)
+      global currentId
+      currentId = len(tweets)
 
 def readWithId(number):
-      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
-            for i, line in enumerate(file):
-                  if i == number:
-                        break
-            data = json.loads(line)
+      if(number >= 0 and number < len(tweets)):
+            global currentId
+            currentId = number
+            data = json.loads(tweets[currentId])
             print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+      else:
+            print("Invalid ID. Try again.\n")
 
 def updateTweet(number):
-      tweetText = input("Please, input the text of the tweet:")
-      time = datetime.now()
-      creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
-      finishedTweet = dict({"text":tweetText,"created_at":creationTime})
-      updatedTweets.append(finishedTweet)
-      updatedIds.append(number)
-      global currentId
-      currentId = number
+      if(number >= 0 and number < len(tweets)):
+            tweetText = input("Please, input the text of the tweet:")
+            time = datetime.now()
+            creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+            finishedTweet = dict({"text":tweetText,"created_at":creationTime})
+            tweets[number] = finishedTweet
+            global currentId
+            currentId = number
+      else:
+            print("Invalid ID. Try again.\n")
 
 def deleteTweet():
-      deletedTweets.append(currentId)
+      global currentId
+      del tweets[currentId]
+      currentId -= 1
 
 def printLast():
-      with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
-            for lastId, line in enumerate(file):
-                pass
-            global currentId
-            currentId = lastId
-            data = json.loads(line)
-            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+      global currentId
+      currentId = (len(tweets) - 1)
+      data = json.loads(tweets[-1])
+      print("\"" +data['text'] + "\" Created at: " + data['created_at'])
 
 def readPrev():
+      global currentId
       if (currentId-1) < 0:
             print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
       else:
-            currentId = currentId - 1
-            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
-                  for i, line in enumerate(file):
-                        if i == currentId:
-                              break
-                  data = json.loads(line)
-                  print("\"" +data['text'] + "\" Created at: " + data['created_at'])
+            currentId -= 1
+            data = json.loads(tweets[currentId])
+            print("\"" +data['text'] + "\" Created at: " + data['created_at'])
 
 def readNext():
-      if (currentId+1) > 0:
+      global currentId
+      if (currentId + 1) > (len(tweets) - 1):
             print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
       else:
-            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r') as file:
-                  currentId = currentId + 1
-                  for i, line in enumerate(file):
-                        if i == currentId:
-                              break
-                  data = json.loads(line)
-                  print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
+            currentId += 1
+            data = json.loads(tweets[currentId])
+            print("\"" +data['text'] + "\" Created at: " + data['created_at']) 
 
 def saveAll():
-      if(len(createdTweets)):
-            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'a') as file:
-                  for tweet in createdTweets:
-                        file.write(json.dumps(tweet) + "\n")
-      if(len(deletedTweets)):
-            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+') as file:
-                  lines = file.readlines()
-                  file.seek(0)
-                  file.truncate()
-                  for id, line in enumerate(lines):
-                        if id not in deletedTweets:
-                              file.write(line)
-      if(len(updatedTweets)):
-            with open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+') as file:
-                  lines = file.readlines()
-                  file.seek(0)
-                  file.truncate()
-                  i = 0
-                  for id, line in enumerate(lines):
-                        if id in updatedIds:
-                              file.write(updatedTweets[i])
-                              i += 1
+      with open("tweetdhead300000.json", 'w') as file:
+            for line in tweets:
+                  file.write(json.dumps(line) + '\n')
 
-
-              
 
 try:
-      file = open("C:\\Users\\giorg\\Documents\\Python Projects\\tweetdhead300000.json", 'r+')
+      file = open("tweetdhead300000.json", 'r')
 except:
       print("Something went wrong while opening file. Make sure it exists!")
 else:
-      for lines, _ in enumerate(file, 2):
-            pass
-      fileLines = lines
+      for i, line in enumerate(file):
+            tweets.append(line)
       file.close()
       while(True):
             printMenu()
@@ -140,9 +111,9 @@ else:
                         case('c'):
                               createTweet()
                         case('r'):
-                              readWithId(int(choice[1:]))
+                              readWithId(int(choice[1:]) - 1)
                         case('u'):
-                              updateTweet(int(choice[1:]))
+                              updateTweet(int(choice[1:]) - 1)
                         case('d'):
                               deleteTweet()
                         case('$'):
