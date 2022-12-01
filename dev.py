@@ -109,31 +109,30 @@ else:
             printMenu()
             choice = input()
             if(checkChoice(choice)):
-                  match(choice[0]):
-                        case('c'):
-                              createTweet()
-                        case('r'):
-                              readWithId(int(choice[1:]) - 1)
-                        case('u'):
-                              updateTweet(int(choice[1:]) - 1)
-                        case('d'):
-                              deleteTweet()
-                        case('$'):
-                              printLast()
-                        case('-'):
-                              readPrev()
-                        case('+'):
-                              readNext()
-                        case('='):
-                              print(currentId)
-                        case('q'):
-                              print("Program closed without saving")
-                              exit()
-                        case('w'):
-                              saveAll()
-                        case('x'):
-                              saveAll()
-                              print("Program closed with saving")
-                              exit()
+                  if choice == 'c':
+                        createTweet()
+                  elif choice[0] == 'r':
+                        readWithId(int(choice[1:]) - 1)
+                  elif choice[0] == 'u':
+                        updateTweet(int(choice[1:]) - 1)
+                  elif choice == 'd':
+                        deleteTweet()
+                  elif choice == '$':
+                        printLast()
+                  elif choice == '-':
+                        readPrev()
+                  elif choice == '+':
+                        readNext()
+                  elif choice == '=':
+                        print(currentId)
+                  elif choice == 'q':
+                        print("Program closed without saving")
+                        exit()
+                  elif choice == 'w':
+                        saveAll()
+                  elif choice == 'x':
+                        saveAll()
+                        print("Program closed with saving")
+                        exit()
             else:
                   print("Invalid choice, please try again!")
