@@ -8,25 +8,26 @@ fileLines = 0
 
 def printMenu():
     print('\nPlease, choose what you would like to do:\n')
-    print('c: Create tweet by giving its “text”(derive “created at” by system date time).'
-          '\n   Every created tweet is appended at the end of the rest (in memory and, if saved, in the twitter file).'
-          '\n   Sets current tweet ID to be the created one.\n')
+    print('c: Create tweet. Sets current tweet ID to be the created one.\n')
     print('r<number>: Read the tweet at line/with ID <number>. Sets current tweet ID to be the read one\n')
-    print('u<number>: Update the tweet at line/with ID <number>, by giving its new “text” (derive “created at” by system date time).'
-          '\n           Sets current tweet ID to be the updated one.\n')
-    print('d: Delete current tweet (Hint: adjust tweet IDs when needed).\n')
+    print('u<number>: Update the tweet at line/with ID <number>. Sets current tweet ID to be the updated one.\n')
+    print('d: Delete current tweet.\n')
     print('$: Read the last tweet in the file. Sets current tweet ID to be the last one.\n')
-    print('-: Read one tweet up from the current tweet. Updates current tweet ID accordingly.\n')
-    print('+: Read one tweet down from your current tweet. Updates current tweet ID accordingly.\n')
+    print('-: Read one tweet up from the current tweet.\n')
+    print('+: Read one tweet down from your current tweet.\n')
     print('=: Print current tweet ID.\n')
     print('q: Quit without save.\n')
     print('w: (Over)write file to disk.\n')
     print('x: Exit and save.\n')
 
 def checkChoice(choice):
-      correctChoices = ['c','r','u','d','$','-','+','=','q','w','x']
+      correctChoices = ['c','d','$','-','+','=','q','w','x']
+      correctChoices1 = ['r','u']
       for i in correctChoices:
             if(i == choice):
+                  return True
+      for i in correctChoices1:
+            if(i == choice[0]):
                   return True
       return False
 
@@ -63,12 +64,13 @@ def updateTweet(number):
 def deleteTweet():
       global currentId
       del tweets[currentId]
-      currentId -= 1
+      if currentId >= len(tweets):
+            currentId -= 1
 
 def printLast():
       global currentId
       currentId = (len(tweets) - 1)
-      data = json.loads(tweets[-1])
+      data = tweets[-1]
       print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
 
 def readPrev():
@@ -77,7 +79,7 @@ def readPrev():
             print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
       else:
             currentId -= 1
-            data = json.loads(tweets[currentId])
+            data = tweets[currentId]
             print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
 
 def readNext():
@@ -86,7 +88,7 @@ def readNext():
             print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
       else:
             currentId += 1
-            data = json.loads(tweets[currentId])
+            data = tweets[currentId]
             print(str("\"" +data['text'] + "\" Created at: " + data['created_at'])) 
 
 def saveAll():
@@ -107,7 +109,7 @@ else:
       while(True):
             printMenu()
             choice = input()
-            if(checkChoice(choice[0])):
+            if(checkChoice(choice)):
                   match(choice[0]):
                         case('c'):
                               createTweet()
