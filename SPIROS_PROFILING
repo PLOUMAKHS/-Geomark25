@@ -1,0 +1,244 @@
+
+import json
+import time
+import re
+
+from datetime import datetime
+
+tweets = []
+currentId = 0
+
+#COLOR PALLET TO DISTINGUISH THE PRINTED TIME FOR PROFILING
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+      
+
+def printMenu():
+    print('\n------------------------------------------------------------\n')      
+    print('\nPlease, choose an action:\n')
+    print(bcolors.BOLD+'     c'+bcolors.ENDC+'->  Create tweet by giving its “text”(derive “created at” by system date time).'
+          '\n          Every created tweet is appended at the end of the rest (in memory and, if saved, in the twitter file).'
+          '\n          Sets current tweet ID to be the created one.\n')
+    print(bcolors.BOLD+'r(num)'+bcolors.ENDC+'->  Read the tweet at line/with ID <number>. Sets current tweet ID to be the read one\n')
+    print(bcolors.BOLD+'u(num)'+bcolors.ENDC+'->  Update the tweet at line/with ID <number>, by giving its new “text” (derive “created at” by system date time).'
+          '\n          Sets current tweet ID to be the updated one.\n')
+    print(bcolors.BOLD+'     d'+bcolors.ENDC+'->  Delete current tweet (Hint: adjust tweet IDs when needed).\n')
+    print(bcolors.BOLD+'     $'+bcolors.ENDC+'->  Read the last tweet in the file. Sets current tweet ID to be the last one.\n')
+    print(bcolors.BOLD+'     -'+bcolors.ENDC+'->  Read one tweet up from the current tweet. Updates current tweet ID accordingly.\n')
+    print(bcolors.BOLD+'     +'+bcolors.ENDC+'->  Read one tweet down from your current tweet. Updates current tweet ID accordingly.\n')
+    print(bcolors.BOLD+'     ='+bcolors.ENDC+'->  Print current tweet ID.\n')
+    print(bcolors.BOLD+'     q'+bcolors.ENDC+'->  Quit without save.\n')
+    print(bcolors.BOLD+'     w'+bcolors.ENDC+'->  (Over)write file to disk.\n')
+    print(bcolors.BOLD+'     x'+bcolors.ENDC+'->  Exit and save.\n')
+    print(bcolors.BOLD+'\n------------------------------------------------------------\n')      
+
+
+def checkChoice(choice):
+      correctChoices = ['c','d','$','-','+','=','q','w','x']
+      correctChoices1 = ['r','u']
+      for i in correctChoices:
+            if(i == choice):
+                  return True
+      for i in correctChoices1:
+            if(i == choice[0]):
+                  return True
+      return False
+
+def createTweet():
+      tweetText = input("Please, input the text of the tweet:")
+      time = datetime.now()
+      creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+      finishedTweet = {"text":tweetText,"created_at":creationTime}
+      tweets.append(finishedTweet)
+      global currentId
+      currentId = len(tweets)
+
+def readWithId(number):
+      if(number >= 0 and number < len(tweets)):
+            global currentId
+            currentId = number
+            data = tweets[currentId]
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
+      else:
+            print("Invalid ID. Try again.\n")
+
+def updateTweet(number):
+      if(number >= 0 and number < len(tweets)):
+            tweetText = input("Please, input the text of the tweet:")
+            time = datetime.now()
+            creationTime = time.strftime("%a %b %d %H:%M:%S +0000 %Y")
+            finishedTweet = {"text":tweetText,"created_at":creationTime}
+            tweets[number] = finishedTweet
+            global currentId
+            currentId = number
+      else:
+            print("Invalid ID. Try again.\n")
+
+def deleteTweet():
+      global currentId
+      del tweets[currentId]
+      if currentId >= len(tweets):
+            currentId -= 1
+
+def printLast():
+      global currentId
+      currentId = (len(tweets) - 1)
+      data = tweets[-1]
+      print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
+
+def readPrev():
+      global currentId
+      if (currentId-1) < 0:
+            print("LIMIT REACHED! NO MORE TWEETS ABOVE\n")
+      else:
+            currentId -= 1
+            data = tweets[currentId]
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at']))
+
+def readNext():
+      global currentId
+      if (currentId + 1) > (len(tweets) - 1):
+            print("LIMIT REACHED! NO MORE TWEETS BELOW\n")
+      else:
+            currentId += 1
+            data = tweets[currentId]
+            print(str("\"" +data['text'] + "\" Created at: " + data['created_at'])) 
+
+def saveAll():
+      with open("tweetdhead300000.json", 'w') as file:
+            for line in tweets:
+                  convert = json.dumps(line)
+                  file.write(convert + "\n")
+
+def main() :
+      try:
+            file = open("C:\\Users\\Σπύρος\\Documents\\python tweets\\tweetdhead300000.json", 'r')
+      except:
+            print("Something went wrong while opening file. Make sure it exists!")
+      else:
+            #STARTING THE TIME COUNTING TO MEASURE EXECUTION TIME OF LOADING JSON FUNCTION
+            start_time = time.time()
+
+            for i, line in enumerate(file):
+                  tweets.append(json.loads(line))
+            file.close()
+
+            #ENDING THE TIME COUNTING SINCE FUNCTION HAS ENDED
+            end_time = time.time()
+            print(bcolors.WARNING + "\n|| Execution time of loading JSON file into memory is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)
+
+            while(True):
+
+                  #STARTING THE TIME COUNTING TO MEASURE EXECUTION TIME OF PRINTMENU FUNCTION
+                  start_time = time.time()
+
+                  printMenu()
+                  
+                  #ENDING THE TIME COUNTING SINCE FUNCTION HAS ENDED
+                  end_time = time.time()
+                  print(bcolors.WARNING + "\n|| Execution of printMenu function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)  
+
+                  choice = input()
+                  if(checkChoice(choice)):
+                        if choice == 'c':
+                              #COUNTING EXECUTION TIME OF "CREATE TWEET" FUNCTION
+                              start_time = time.time()
+                              createTweet()
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of createTweet function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)    
+                        elif choice[0] == 'r':
+                              #COUNTING EXECUTION TIME OF "READ WITH ID" FUNCTION
+                              start_time = time.time()
+                              readWithId(int(choice[1:]) - 1)
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of readWithId function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice[0] == 'u':
+                              #COUNTING EXECUTION TIME OF "UPDATE TWEET" FUNCTION
+                              start_time = time.time()
+                              updateTweet(int(choice[1:]) - 1)
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of updateTweet function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice == 'd':
+                              #COUNTING EXECUTION TIME OF "DELETE TWEET" FUNCTION
+                              start_time = time.time()
+                              deleteTweet()
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of deleteTweet function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice == '$':
+                              #COUNTING EXECUTION TIME OF "PRINT LAST TWEET" FUNCTION
+                              start_time = time.time()
+                              printLast()
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of printLast function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice == '-':
+                              #COUNTING EXECUTION TIME OF "READ PREVIOUS" FUNCTION
+                              start_time = time.time()
+                              readPrev()
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of readPrev function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice == '+':
+                              #COUNTING EXECUTION TIME OF "READ NEXT" FUNCTION
+                              start_time = time.time()
+                              readNext()
+                              end_time = time.time()
+                              print(bcolors.WARNING + "\n|| Execution of readNext function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC)   
+                        elif choice == '=':
+                              print(currentId)
+                        elif choice == 'q':
+                              print("Program closed without saving")
+                              exit()
+                        elif choice == 'w':
+                              #COUNTING EXECUTION TIME OF "SAVE ALL" FUNCTION
+                              start_time = time.time()
+                              saveAll()
+                              end_time = time.time()                             
+                              print(bcolors.WARNING + "\n|| Execution of saveAll function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC) 
+                        elif choice == 'x':
+                              #COUNTING EXECUTION TIME OF "SAVE ALL" FUNCTION
+                              start_time = time.time()
+                              saveAll()
+                              end_time = time.time()                             
+                              print(bcolors.WARNING + "\n|| Execution of saveAll function is :", end_time - start_time, "seconds! ||"+ bcolors.ENDC) 
+                              print("Program closed with saving")
+                              exit()
+                  else:
+                        print("Invalid choice, please try again!")
+      
+      
+#USING THE "MAIN" FUNCTION TO RUN THE PROGRAMM WHILE MONITORED BY CPROFILE TO COLECT NEEDED STATS
+#IN ORDER TO GET THE PROFILING DATA USE "X" IN THE END TO TERMINATE PROGRAMM TO CREATE THE TXT PROFILING REPORTS
+if __name__ == "__main__":
+      import cProfile
+      cProfile.run('main()', "Profiled.dat")
+      
+      #IMPORTING LIBRARIES
+      import pstats
+      from pstats import SortKey
+
+      #MAKING TXT FILE THAT SORTS ALL PREFORMED ACTIONS BY TIME
+      #CONVERTING THE DATA FROM THE DAT FILE TO READABLE TXT FOR PROFILING
+      with open("output_time.txt", 'w') as f:
+            p = pstats.Stats("Profiled.dat", stream=f)                              
+            p.sort_stats("time").print_stats()
+
+      #MAKING TXT FILE THAT SORTS ALL PREFORMED ACTIONS BY NUMBER OF CALLS
+      #CONVERTING THE DATA FROM THE DAT FILE TO READABLE TXT FOR PROFILING
+      with open("output_calls.txt", 'w') as f:
+            p = pstats.Stats("Profiled.dat", stream=f)                              
+            p.sort_stats("calls").print_stats()
+           
+      #MAKING TXT FILE THAT SORTS ALL PREFORMED ACTIONS BY CUMULATIVE
+      #CONVERTING THE DATA FROM THE DAT FILE TO READABLE TXT FOR PROFILING
+      with open("output_cumlative.txt", 'w') as f:
+            p = pstats.Stats("Profiled.dat", stream=f)                              
+            p.sort_stats(SortKey.CUMULATIVE).print_stats()        
