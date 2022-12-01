@@ -10,7 +10,7 @@ deletedTweets = []
 currentId = 0
 fileLines = 0
 
-logging.basicConfig(level=logging.INFO, filename = "C:\\Users\\Giorkos\\Desktop\\Python\\tweetdhead300000.json",  filemode = 'w')
+logging.basicConfig(level=logging.INFO, filename = 'logme.txt',  filemode = 'a')
 
 logger = logging.getLogger(__name__)
 
