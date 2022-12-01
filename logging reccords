@@ -1,0 +1,17 @@
+# Log Records
+import logging
+
+old_factory = logging.getLogRecordFactory()
+
+def record_factory(*args, **kargs):
+    record = old_factory(*args, *kargs)
+    record.logme = 'logme.txt'
+    return record
+
+logging.basicConfig(level=logging.INFO , filename="logme.txt",   filemode='w',
+                    format="%(asctime)s - %(levelname)s - %(message)s")
+
+
+logging.setLogRecordFactory(record_factory)
+
+logging.warning("nuke incoming")                   
