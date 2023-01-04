@@ -1,0 +1,36 @@
+%%file forkingzigzag.py
+import os,sys
+
+def main():
+  ZigZag_Level_Limit = 9
+  ZigZag_Level = 0
+
+
+  for i in range(0,1):
+    #if i % 2 != 0:
+        pid1 = os.fork()
+        #print(f"I am process with PID = {os.getpid()} standing at Level #{i} of the ZigZag path, my parent is PID = {os.getppid()} and  I am its left child ")
+        if pid1 == 0:
+          print(f"I am process with PID = {os.getpid()} standing at Level #{i} of the ZigZag path, my parent is PID = {os.getppid()} and  I am its left child ")
+          continue
+        elif pid1 == -1:
+             print(os.strerror("failed to folk"))
+             os._exit(1)
+        else:    
+             pid2 = os.fork()
+             #print(f"I am process with PID = {os.getpid()} standing at Level #{i} of the ZigZag path, my parent is PID = {os.getppid()} and  I am its right child ")
+             if pid2 == 0:
+                print(f"I am process with PID = {os.getpid()} standing at Level #{i} of the ZigZag path, my parent is PID = {os.getppid()} and  I am its right child ")
+                continue
+             elif pid2 == -1:
+              print(os.strerror("failed to folk"))
+              os._exit(1)
+             else:
+                os.wait ()
+                os.wait ()
+                os._exit (0)
+      
+  return 0
+
+if __name__ == "__main__":
+  os._exit(main()) 
